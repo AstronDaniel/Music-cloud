@@ -2,24 +2,42 @@
 const users = [];
 
 // Handle Sign-Up
-function handleSignUp(event) {
+async function handleSignUp(event) {
     event.preventDefault();
 
-    const username = document.getElementById("signupUsername").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    // Check if user already exists
-    const existingUser = users.find(user => user.email === email);
-    if (existingUser) {
-        alert("User already exists. Please log in.");
-        return;
+    // Prepare the data to be sent
+    const userData = {
+        username: username,
+        email: email,
+        password: password
+    };
+
+    try {
+        const response = await fetch('http://localhost:5000/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message); // Show success message
+            window.location.href = "login.html"; // Redirect to login page
+        } else {
+            alert(result.error); // Show error message
+            console.error('Error during registration:', result.error);
+        }
+    } catch (error) {
+        console.error('Error during registration:', error);
+        alert('An error occurred during registration. Please try again.');
     }
-
-    // Save user to the mock database
-    users.push({ username, email, password });
-    alert("Sign-Up successful! You can now log in.");
-    window.location.href = "login.html";
 }
 
 // Handle Login

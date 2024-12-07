@@ -51,15 +51,7 @@
         animation: fadeIn 1s ease-in;
     }
        
-    .fade-in {
-        opacity: 0;
-        animation: fadeIn 1s ease-in forwards;
-    }
     
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -87,12 +79,20 @@
                 </div>
                 
                 <div class="flex space-x-4">
-                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition" data-modal-target="login-modal" data-modal-toggle="login-modal">
+                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition" data-modal-target="login-modal" data-modal-toggle="login-modal" onclick="openLogin()">
                         Login
                     </button>
-                    <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" data-modal-target="signup-modal" data-modal-toggle="signup-modal">
+                    <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" data-modal-target="signup-modal" data-modal-toggle="signup-modal" onclick="openSignup()">
                         Sign Up
                     </button>
+                    <script>
+                        function openSignup(){
+                            window.location.href="signup.html";
+                        }
+                        function openLogin(){
+                            window.location.href="login.html";
+                        }
+                    </script>
                 </div>
             </div>
             
@@ -131,14 +131,13 @@
     <header id="home" class="relative h-screen flex items-center justify-center text-center pt-16">
         <div class="absolute inset-0 overflow-hidden">
             <div class="relative h-full w-full overflow-hidden">
-                <div id="loadingOverlay" class="absolute inset-0 bg-gray-900 flex items-center justify-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
-                </div>
+                
                 
                 <img 
                     id="splashImage"
                     alt="Music Splash"
                     class="w-full h-full object-cover transition-opacity duration-700"
+                    src="assets/default-splash.jpg.jpg"
                 >
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div class="absolute bottom-10 left-10 text-white">
@@ -196,7 +195,7 @@
         </div>
     </section>
      <!-- Login Modal -->
-     <div id="login-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+     <!-- <div id="login-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-gray-800 rounded-lg shadow">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
@@ -222,7 +221,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
     <footer class="bg-gray-800 py-12">
@@ -257,13 +256,7 @@
     
     <!-- Flowbite JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <script src="splashImage.js"></script>
-    <script>
- 
-        document.addEventListener('DOMContentLoaded', () => {
-                      document.addEventListener('DOMContentLoaded', loadSplashImage);
-        });
-    </script>
+   
     <script>
         // YouTube video IDs for dynamic content
         const youtubeVideos = [
