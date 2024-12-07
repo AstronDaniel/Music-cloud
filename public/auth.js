@@ -1,5 +1,7 @@
 // Mock Database (You can replace this with real backend integration later)
 const users = [];
+// auth.js
+const API_URL = 'https://beat-wave.onrender.com';
 
 // Handle Sign-Up
 async function handleSignUp(event) {

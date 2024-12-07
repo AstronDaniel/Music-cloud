@@ -1,4 +1,5 @@
 let isLoggedIn = false; // Track login state
+const API_URL = 'https://beat-wave.onrender.com';
 
 // Utility Functions
 const utils = {
