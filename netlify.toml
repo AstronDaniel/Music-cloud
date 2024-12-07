@@ -1,6 +1,11 @@
 [build]
-  publish = "/"
-  command = "# no build command needed"
+  publish = "public"
+  command = "npm install"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://beat-wave.onrender.com/api/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
