@@ -50,9 +50,9 @@
                     </div>
                     <input 
                         type="text" 
-                        id="username" 
+                        id="loginUsername" 
                         required 
-                        placeholder="Enter your username" 
+                        placeholder="Enter your username or email" 
                         class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
                     >
                 </div>
@@ -66,7 +66,7 @@
                     </div>
                     <input 
                         type="password" 
-                        id="password" 
+                        id="loginPassword" 
                         required 
                         placeholder="Enter your password" 
                         class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
@@ -110,5 +110,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
     <script src="auth.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Password visibility toggle
+            $('#togglePassword').on('click', function() {
+                const passwordField = $('#password');
+                const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                passwordField.attr('type', type);
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+
+            // Form submission handling (placeholder)
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Basic client-side validation
+             
+
+                handleLogin(e);
+            });
+        });
+    </script>
 </body>
 </html>

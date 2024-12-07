@@ -41,19 +41,38 @@ async function handleSignUp(event) {
 }
 
 // Handle Login
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
 
-    const username = document.getElementById("loginUsername").value;
+    const email = document.getElementById("loginUsername").value;
+    
     const password = document.getElementById("loginPassword").value;
 
-    // Check if the user exists and password matches
-    const user = users.find(user => user.username === username && user.password === password);
-    if (user) {
-        alert(`Welcome back, ${user.username}!`);
-        // Redirect to the main page after login
-        window.location.href = "index.html";
-    } else {
-        alert("Invalid username or password.");
+    const loginData = {
+        emailOrUsername: email,
+        password: password
+    };
+
+    try {
+        const response = await fetch('http://localhost:5000/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message); // Show success message
+            window.location.href = "homepage.html"; // Redirect to homepage
+        } else {
+            alert(result.error); // Show error message
+            console.error('Error during login:', result.error);
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('An error occurred during login. Please try again.');
     }
 }
