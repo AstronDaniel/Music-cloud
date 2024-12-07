@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatWave13</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <h1>BeatWave13</h1>
+        </div>
+        <nav class="menu">
+            <a href="#home">Home</a>
+            <a href="https://www.billboard.com/charts/hot-100/" target="_blank">Latest Music</a>
+            <a href="https://www.billboard.com/charts/hot-100/" target="_blank">Trending</a>
+            <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank">Playlists</a>
+            <a href = "login.html" class = " login-button"> Login</a>
+            <a href = "signup.html" class = " signup-button"> Signup</a>
+            <div id="searchContainer">
+                <input type="text" id="searchBar" placeholder="Search music...">
+                <button onclick="searchMusic()">Search</button>
+            </div>
+            <div id="searchResults"></div>
+            
+            
+            
+        </nav>
+    
+</header>
+
+
+</div>
+    </header>
+    
+    </div>
+    
+    </div>
+    
+
+    <section id="hero">
+        <div class="video-wrapper">
+            <!-- Embedding the YouTube video -->
+            <iframe 
+                id="hero-video" 
+                src="https://www.youtube.com/embed/eUePmZFIXUg?autoplay=1&mute=1&loop=1&playlist=eUePmZFIXUg" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media" 
+                allowfullscreen>
+            </iframe>
+        </div>
+        <div class="hero-content">
+            <h2>Stream Your Favorite Hits</h2>
+            <p>Discover, stream, and download the latest jams.</p>
+            <button onclick="scrollToSection('latest')">Explore Music</button>
+        </div>
+    </section>
+
+    <main>
+        <section id="latest" class="music-section">
+            <h2>Latest Music</h2>
+            <div id="latestMusic" class="music-grid">
+                
+                <!-- Video 1 -->
+                <div class="music-card">
+                    <h3>Latest Music 1</h3>
+                    
+                    <iframe 
+                        width="300" 
+                        height="200" 
+                       
+                        src ="https://www.youtube.com/embed/uLK2r3sG4lE?si=JtV05_eQQgWPYeE8"
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <!-- Video 2 -->
+                <div class="music-card">
+                    <h3>Latest Music 2</h3>
+                    <iframe 
+                        width="300" 
+                        height="200" 
+                        src="https://www.youtube.com/embed/eUePmZFIXUg?autoplay=1&mute=1&loop=1&playlist=eUePmZFIXUg" 
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <!-- Video 3 -->
+                <div class="music-card">
+                    <h3>Latest Music 3</h3>
+                    <iframe 
+                        width="300" 
+                        height="200" 
+                        src="https://www.youtube.com/embed/rJwEphsNVH8" 
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            <input type="file" id="uploadFile" onchange="uploadMusic()" hidden>
+            <button onclick="triggerUpload()">Upload Music</button>
+        </section>
+        
+
+        <section id="trending" class="music-section">
+            <h2>Trending Now</h2>
+            <a href="https://www.spotify.com" target="_blank">AUDIOS</a>
+            <div id="trendingMusic" class="music-grid">
+                <!-- Dynamically populated music cards -->
+            </div>
+        </section>
+
+        <section id="playlists" class="music-section">
+            <h2>Your Playlists</h2>
+            <ul id="playlist">
+                <!-- Dynamic playlist content -->
+            </ul>
+            <input type="text" id="newTrack" placeholder="Add music URL to playlist">
+            <button onclick="addToPlaylist()">Add to Playlist</button>
+        </section>
+    </main>
+
+    <footer>
+        
+        
+            <div class="footer-links">
+                <div>
+                    <h3>Hot Categories</h3>
+                    <ul>
+  <li><a href="https://www.radionl.com/podcasts" target="_blank">NL Podcast</a></li>
+<li><a href="https://www.naijaloaded.com.ng" target="_blank">NL Giveaway</a></li>
+<li><a href="https://www.naijaloaded.com.ng" target="_blank">NL Prediction</a></li>
+<li><a href="https://www.talkzone.com/" target="_blank">Talk Zone</a></li>
+
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>Helpful Links</h3>
+                    <ul><li><a href="https://www.spotify.com" target="_blank">Spotify</a></li>
+                        <li><a href="https://www.apple.com/apple-music/" target="_blank">Apple Music</a></li>
+                        <li><a href="https://music.youtube.com" target="_blank">YouTube Music</a></li>
+                        <li><a href="https://www.soundcloud.com" target="_blank">SoundCloud</a></li>
+                        <li><a href="https://www.tidal.com" target="_blank">Tidal</a></li>
+                        <li><a href="https://www.deezer.com" target="_blank">Deezer</a></li>
+                        <li><a href="https://music.amazon.com" target="_blank">Amazon Music</a></li>
+                        <li><a href="https://www.pandora.com" target="_blank">Pandora</a></li>
+                        <li><a href="https://www.audiomack.com" target="_blank">Audiomack</a></li>
+                        </ul>
+                    </div>
+                    <div>
+
+                        <h3>More information</h3>
+                       <li><a href="about.html" target="_blank">About us</a></li>
+                    </ul>
+                </div>
+            
+            
+       
+        <div class="footer-bottom">
+            <p>BeatWave 2024. All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="hideLoginForm()">&times;</span>
+            <h2>Login to BeatWave13</h2>
+            <input type="text" id="username" placeholder="Enter your username">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <script src="homepage.js"></script>
+</body>
+</html>

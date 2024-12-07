@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - BeatWave13</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Sign Up</h1>
+        <form id="signupForm" onsubmit="handleSignUp(event)">
+            <input type="text" id="signupUsername" placeholder="Username" required>
+            <input type="email" id="signupEmail" placeholder="Email" required>
+            <input type="password" id="signupPassword" placeholder="Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Log In</a></p>
+        <p><a href = " homepage.html"class = "back-home">Go Back Home</a></p>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

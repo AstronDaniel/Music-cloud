@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatWave13 - Music Streaming Platform</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Flowbite CSS and JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e1e2e, #16213e);
+            color: #ffffff;
+        }
+        .music-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .music-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #00f260, #0575e6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0575e6;
+            border-radius: 4px;
+        }
+        @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .animate-fade-in {
+        animation: fadeIn 1s ease-in;
+    }
+       
+    .fade-in {
+        opacity: 0;
+        animation: fadeIn 1s ease-in forwards;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 p-4 fixed w-full z-50 top-0 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold gradient-text">BeatWave13</h1>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#home" class="hover:text-blue-400 transition">Home</a>
+                <a href="#latest" class="hover:text-blue-400 transition">Latest Music</a>
+                <a href="#trending" class="hover:text-blue-400 transition">Trending</a>
+                <a href="#playlists" class="hover:text-blue-400 transition">Playlists</a>
+                
+                <div class="relative">
+                    <input type="text" 
+                           id="searchBar" 
+                           placeholder="Search music..." 
+                           class="bg-gray-700 text-white px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition" data-modal-target="login-modal" data-modal-toggle="login-modal">
+                        Login
+                    </button>
+                    <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" data-modal-target="signup-modal" data-modal-toggle="signup-modal">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="md:hidden">
+                <button id="mobile-menu-toggle" class="text-white">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-gray-800 absolute left-0 right-0 top-full">
+            <div class="flex flex-col items-center space-y-4 p-4">
+                <a href="#home" class="hover:text-blue-400 transition">Home</a>
+                <a href="#latest" class="hover:text-blue-400 transition">Latest Music</a>
+                <a href="#trending" class="hover:text-blue-400 transition">Trending</a>
+                <a href="#playlists" class="hover:text-blue-400 transition">Playlists</a>
+                <input type="text" 
+                       id="mobileSearchBar" 
+                       placeholder="Search music..." 
+                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-full">
+                <div class="flex space-x-4">
+                    <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition" data-modal-target="login-modal" data-modal-toggle="login-modal">
+                        Login
+                    </button>
+                    <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" data-modal-target="signup-modal" data-modal-toggle="signup-modal">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Previous implementation) -->
+    <header id="home" class="relative h-screen flex items-center justify-center text-center pt-16">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="relative h-full w-full overflow-hidden">
+                <div id="loadingOverlay" class="absolute inset-0 bg-gray-900 flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                </div>
+                
+                <img 
+                    id="splashImage"
+                    alt="Music Splash"
+                    class="w-full h-full object-cover transition-opacity duration-700"
+                >
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-10 left-10 text-white">
+                    <h1 class="text-4xl font-bold mb-2">Discover Your Sound</h1>
+                    <p class="text-xl">Stream millions of tracks and podcasts</p>
+                </div>
+            </div>
+            <div class="absolute inset-0 bg-black opacity-60"></div>
+        </div>
+        
+        <div class="relative z-10 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">Stream Your Favorite Hits</h2>
+            <p class="text-lg md:text-xl mb-8">Discover, stream, and download the latest jams</p>
+            <button class="bg-green-500 hover:bg-green-600 px-6 md:px-8 py-2 md:py-3 rounded-full text-base md:text-lg transition">
+                Explore Music
+            </button>
+        </div>
+    </header>
+
+    <!-- Latest Music Section -->
+    <section id="latest" class="container mx-auto py-16 px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Latest Music</h2>
+        <div id="latestMusicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <!-- Dynamically populated music cards -->
+        </div>
+        <div class="text-center mt-12">
+            <button class="bg-green-500 hover:bg-green-600 px-8 py-3 rounded-full transition">
+                Upload Music
+            </button>
+        </div>
+    </section>
+
+    <!-- Trending Music Section -->
+    <section id="trending" class="container mx-auto py-16 px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Trending Now</h2>
+        <div id="trendingMusicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <!-- Dynamically populated trending music cards -->
+        </div>
+    </section>
+
+    <!-- Playlists Section -->
+    <section id="playlists" class="container mx-auto py-16 px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Your Playlists</h2>
+        <div id="playlistGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <!-- Dynamically populated playlist cards -->
+        </div>
+        <div class="text-center mt-12">
+            <input type="text" 
+                   id="playlistInput" 
+                   placeholder="Create new playlist..." 
+                   class="bg-gray-700 text-white px-4 py-2 rounded-l-full">
+            <button class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-r-full transition">
+                Create
+            </button>
+        </div>
+    </section>
+     <!-- Login Modal -->
+     <div id="login-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-gray-800 rounded-lg shadow">
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
+                    <h3 class="text-xl font-semibold text-white">
+                        Sign in to BeatWave13
+                    </h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="login-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4 md:p-5">
+                    <form class="space-y-4" action="#">
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-white">Your email</label>
+                            <input type="email" name="email" id="email" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@company.com" required>
+                        </div>
+                        <div>
+                            <label for="password" class="block mb-2 text-sm font-medium text-white">Your password</label>
+                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Login to your account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="bg-gray-800 py-12">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+            <div>
+                <h3 class="text-xl font-bold mb-4 gradient-text">Hot Categories</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-blue-400 transition">NL Podcast</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">NL Giveaway</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">NL Prediction</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4 gradient-text">Music Platforms</h3>
+                <ul class="space-y-2">
+                    <li><a href="https://www.spotify.com" target="_blank" class="hover:text-blue-400 transition">Spotify</a></li>
+                    <li><a href="https://music.apple.com" target="_blank" class="hover:text-blue-400 transition">Apple Music</a></li>
+                    <li><a href="https://music.youtube.com" target="_blank" class="hover:text-blue-400 transition">YouTube Music</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4 gradient-text">About</h3>
+                <p class="text-gray-400">BeatWave13 - Your ultimate music streaming experience. Discover, stream, and share your favorite tunes.</p>
+            </div>
+        </div>
+        <div class="text-center mt-8 text-gray-500">
+            © 2024 BeatWave13. All Rights Reserved.
+        </div>
+    </footer>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Flowbite JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="splashImage.js"></script>
+    <script>
+ 
+        document.addEventListener('DOMContentLoaded', () => {
+                      document.addEventListener('DOMContentLoaded', loadSplashImage);
+        });
+    </script>
+    <script>
+        // YouTube video IDs for dynamic content
+        const youtubeVideos = [
+            'uLK2r3sG4lE', 'eUePmZFIXUg', 'rJwEphsNVH8', 
+            'dQw4w9WgXcQ', 'StjwebIf8xY', 'YQHsXMglC9A', 
+            'oYmzdvMoUUA', 'kJQP7kiw5Fk', 'RBumD1wciQU'
+        ];
+
+        // Function to generate a music card
+        function createMusicCard(videoId) {
+            return `
+                <div class="music-card bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <iframe 
+                        class="w-full h-48 md:h-64"
+                        src="https://www.youtube.com/embed/${videoId}" 
+                        frameborder="0" 
+                        allowfullscreen>
+                    </iframe>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold truncate">Music Track ${Math.floor(Math.random() * 1000)}</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition">
+                                Play
+                            </button>
+                            <div class="flex items-center">
+                                <i class="fas fa-heart text-red-500 mr-2"></i>
+                                <span>${Math.floor(Math.random() * 10000)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to generate playlist card
+        function createPlaylistCard(name) {
+            return `
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold truncate">${name || `Playlist ${Math.floor(Math.random() * 100)}`}</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-sm text-gray-400">${Math.floor(Math.random() * 20)} tracks</span>
+                            <button class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded-full text-sm transition">
+                                Play
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        $(document).ready(function() {
+            // Populate Latest Music
+            for (let i = 0; i < 8; i++) {
+                $('#latestMusicGrid').append(
+                    createMusicCard(youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)])
+                );
+            }
+
+            // Populate Trending Music
+            for (let i = 0; i < 8; i++) {
+                $('#trendingMusicGrid').append(
+                    createMusicCard(youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)])
+                );
+            }
+
+            // Populate Playlists
+            const playlistNames = ['Chill Vibes', 'Workout Mix', 'Road Trip', 'Late Night', 'Party Hits'];
+            for (let i = 0; i < 8; i++) {
+                $('#playlistGrid').append(
+                    createPlaylistCard(playlistNames[Math.floor(Math.random() * playlistNames.length)])
+                );
+            }
+
+            // Mobile menu toggle
+            $('#mobile-menu-toggle').on('click', function() {
+                $('#mobile-menu').toggleClass('hidden');
+            });
+
+            // Smooth scrolling for navigation links
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if (target.length) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 80
+                    }, 1000);
+                    // Close mobile menu if open
+                    $('#mobile-menu').addClass('hidden');
+                }
+            });
+
+            // Search functionality (placeholder)
+            $('#searchBar, #mobileSearchBar').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                console.log('Searching for:', value);
+            });
+
+            // Add playlist functionality
+            $('#playlistInput + button').on('click', function() {
+                const playlistName = $('#playlistInput').val() || `Playlist ${Math.floor(Math.random() * 100)}`;
+                $('#playlistGrid').prepend(createPlaylistCard(playlistName));
+                $('#playlistInput').val(''); // Clear input
+            });
+        });
+    </script>
+</body>
+</html>
