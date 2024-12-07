@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: beatwave-api
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGODB_URI
+        value: "mongodb+srv://Astrav:sempala152@beatwave.rr74j.mongodb.net/beatwave?retryWrites=true&w=majority&appName=beatwave"
+      - key: PORT
+        value: "10000"
