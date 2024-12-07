@@ -2,12 +2,16 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 require('dotenv').config(); // For environment variables
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json()); // For parsing application/json
+
+app.use(cors({
+  origin: ['https://beatwave13.netlify.app', 'http://localhost:3000'],
+  credentials: true
+}));
+
+app.use(express.json());
 
 // MongoDB Atlas connection URI
 const uri = process.env.MONGODB_URI; // Store your connection string in .env
@@ -27,8 +31,9 @@ const songRoutes = require('./api/routes/songRoutes'); // Ensure the correct pat
 
 // Use routes
 app.use('/api/songs', songRoutes);
+app.use('/api/users', require('./api/routes/userRoutes'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

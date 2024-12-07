@@ -129,7 +129,7 @@ const musicDownloader = {
                 }
             });
 
-            const downloadUrl = `http://localhost:5000/api/songs/download?videoUrl=${encodeURIComponent(videoUrl)}`;
+            const downloadUrl = `${process.env.REACT_APP_API_URL}songs/download?videoUrl=${encodeURIComponent(videoUrl)}`;
             
             // Use fetch with timeout
             const response = await fetch(downloadUrl, {
@@ -164,7 +164,7 @@ const musicDownloader = {
 // Fetch and render latest music
 async function fetchAndRenderLatestMusic() {
     try {
-        const response = await fetch('http://localhost:5000/api/songs/latest');
+        const response = await fetch('${process.env.REACT_APP_API_URL}songs/latest');
         const data = await response.json();
 
         if (response.ok) {
@@ -181,7 +181,7 @@ async function fetchAndRenderLatestMusic() {
 // Fetch and render trending music
 async function fetchAndRenderTrendingMusic() {
     try {
-        const response = await fetch('http://localhost:5000/api/songs/trending');
+        const response = await fetch('${process.env.REACT_APP_API_URL}songs/trending');
         const data = await response.json();
 
         if (response.ok) {
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const searchHandler = {
     async searchSongs(query) {
         try {
-            const response = await fetch(`http://localhost:5000/api/songs/search?query=${encodeURIComponent(query)}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}songs/search?query=${encodeURIComponent(query)}`);
             const data = await response.json();
             
             if (response.ok) {
