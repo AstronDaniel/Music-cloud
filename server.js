@@ -23,16 +23,10 @@ mongoose.connect(uri, {
 });
 
 // Import routes
-const userRoutes = require('./api/routes/userRoutes');
-const songRoutes = require('./api/routes/songRoutes');
-const videoRoutes = require('./api/routes/videoRoutes');
-const playlistRoutes = require('./api/routes/playlistRoutes');
+const songRoutes = require('./api/routes/songRoutes'); // Ensure the correct path
 
 // Use routes
-app.use('/api/users', userRoutes);
 app.use('/api/songs', songRoutes);
-app.use('/api/videos', videoRoutes);
-app.use('/api/playlists', playlistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

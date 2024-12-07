@@ -20,6 +20,7 @@
             background: linear-gradient(135deg, #1e1e2e, #16213e);
             color: #ffffff;
         }
+       
         .music-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -115,13 +116,18 @@
                        id="mobileSearchBar" 
                        placeholder="Search music..." 
                        class="w-full bg-gray-700 text-white px-4 py-2 rounded-full">
-                <div class="flex space-x-4">
+                             
                     <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition" data-modal-target="login-modal" data-modal-toggle="login-modal">
                         Login
                     </button>
                     <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" data-modal-target="signup-modal" data-modal-toggle="signup-modal">
                         Sign Up
                     </button>
+                    <button id="uploadBtn" class="hidden bg-green-600 hover:bg-green-700 px-4 py-2 rounded-full transition" onclick="uploadModule.triggerUpload()">
+                        Upload
+                    </button>
+                    <input type="file" id="uploadFile" class="hidden" accept="audio/mp3,audio/mpeg" />
+                
                 </div>
             </div>
         </div>
@@ -156,17 +162,15 @@
             </button>
         </div>
     </header>
-
+   <!-- Add after search bar in homepage.html -->
+   <div id="searchResults" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+    <!-- Search results will be rendered here -->
+</div>
     <!-- Latest Music Section -->
     <section id="latest" class="container mx-auto py-16 px-4">
         <h2 class="text-3xl font-bold text-center mb-12 gradient-text">Latest Music</h2>
         <div id="latestMusicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <!-- Dynamically populated music cards -->
-        </div>
-        <div class="text-center mt-12">
-            <button class="bg-green-500 hover:bg-green-600 px-8 py-3 rounded-full transition">
-                Upload Music
-            </button>
         </div>
     </section>
 
@@ -195,7 +199,7 @@
         </div>
     </section>
      <!-- Login Modal -->
-     <!-- <div id="login-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+     <div id="login-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-gray-800 rounded-lg shadow">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
@@ -221,8 +225,15 @@
                 </div>
             </div>
         </div>
-    </div> -->
-
+    </div>
+<!-- Signup Modal -->
+<div id="signup-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Sign Up</h2>
+        <!-- Signup form content -->
+        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded" onclick="hideSignupForm()">Close</button>
+    </div>
+</div>
 
     <footer class="bg-gray-800 py-12">
         <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
@@ -256,112 +267,9 @@
     
     <!-- Flowbite JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-   
-    <script>
-        // YouTube video IDs for dynamic content
-        const youtubeVideos = [
-            'uLK2r3sG4lE', 'eUePmZFIXUg', 'rJwEphsNVH8', 
-            'dQw4w9WgXcQ', 'StjwebIf8xY', 'YQHsXMglC9A', 
-            'oYmzdvMoUUA', 'kJQP7kiw5Fk', 'RBumD1wciQU'
-        ];
+   <script src="homepage.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        // Function to generate a music card
-        function createMusicCard(videoId) {
-            return `
-                <div class="music-card bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                    <iframe 
-                        class="w-full h-48 md:h-64"
-                        src="https://www.youtube.com/embed/${videoId}" 
-                        frameborder="0" 
-                        allowfullscreen>
-                    </iframe>
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold truncate">Music Track ${Math.floor(Math.random() * 1000)}</h3>
-                        <div class="flex justify-between items-center mt-2">
-                            <button class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-full text-sm transition">
-                                Play
-                            </button>
-                            <div class="flex items-center">
-                                <i class="fas fa-heart text-red-500 mr-2"></i>
-                                <span>${Math.floor(Math.random() * 10000)}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Function to generate playlist card
-        function createPlaylistCard(name) {
-            return `
-                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold truncate">${name || `Playlist ${Math.floor(Math.random() * 100)}`}</h3>
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-sm text-gray-400">${Math.floor(Math.random() * 20)} tracks</span>
-                            <button class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded-full text-sm transition">
-                                Play
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        $(document).ready(function() {
-            // Populate Latest Music
-            for (let i = 0; i < 8; i++) {
-                $('#latestMusicGrid').append(
-                    createMusicCard(youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)])
-                );
-            }
-
-            // Populate Trending Music
-            for (let i = 0; i < 8; i++) {
-                $('#trendingMusicGrid').append(
-                    createMusicCard(youtubeVideos[Math.floor(Math.random() * youtubeVideos.length)])
-                );
-            }
-
-            // Populate Playlists
-            const playlistNames = ['Chill Vibes', 'Workout Mix', 'Road Trip', 'Late Night', 'Party Hits'];
-            for (let i = 0; i < 8; i++) {
-                $('#playlistGrid').append(
-                    createPlaylistCard(playlistNames[Math.floor(Math.random() * playlistNames.length)])
-                );
-            }
-
-            // Mobile menu toggle
-            $('#mobile-menu-toggle').on('click', function() {
-                $('#mobile-menu').toggleClass('hidden');
-            });
-
-            // Smooth scrolling for navigation links
-            $('a[href^="#"]').on('click', function(event) {
-                var target = $(this.getAttribute('href'));
-                if (target.length) {
-                    event.preventDefault();
-                    $('html, body').stop().animate({
-                        scrollTop: target.offset().top - 80
-                    }, 1000);
-                    // Close mobile menu if open
-                    $('#mobile-menu').addClass('hidden');
-                }
-            });
-
-            // Search functionality (placeholder)
-            $('#searchBar, #mobileSearchBar').on('keyup', function() {
-                var value = $(this).val().toLowerCase();
-                console.log('Searching for:', value);
-            });
-
-            // Add playlist functionality
-            $('#playlistInput + button').on('click', function() {
-                const playlistName = $('#playlistInput').val() || `Playlist ${Math.floor(Math.random() * 100)}`;
-                $('#playlistGrid').prepend(createPlaylistCard(playlistName));
-                $('#playlistInput').val(''); // Clear input
-            });
-        });
-    </script>
 </body>
 </html>
