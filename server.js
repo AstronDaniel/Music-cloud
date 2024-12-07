@@ -1,10 +1,14 @@
 // server.js
-const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config(); // For environment variables
+const mongoose = require('mongoose');
+const WebSocket = require('ws');
+const http = require('http');
+require('dotenv').config();
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
 app.use(cors({
   origin: ['https://beatwave13.netlify.app', 'http://localhost:3000'],
@@ -13,27 +17,29 @@ app.use(cors({
 
 app.use(express.json());
 
-// MongoDB Atlas connection URI
-const uri = process.env.MONGODB_URI; // Store your connection string in .env
-
-// Connect to MongoDB with increased timeout settings
-mongoose.connect(uri, {
-    serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
-    socketTimeoutMS: 45000 // Increase socket timeout to 45 seconds
-}).then(() => {
-    console.log("Connected to MongoDB!");
-}).catch(err => {
-    console.error("Error connecting to MongoDB:", err);
+// WebSocket connection handling
+wss.on('connection', (ws) => {
+  ws.id = Math.random().toString(36).substr(2, 9);
+  console.log('New client connected');
+  
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
 });
 
-// Import routes
-const songRoutes = require('./api/routes/songRoutes'); // Ensure the correct path
+// Add WebSocket server to app
+app.set('wss', wss);
 
-// Use routes
-app.use('/api/songs', songRoutes);
+// Routes
+app.use('/api/songs', require('./api/routes/songRoutes'));
 app.use('/api/users', require('./api/routes/userRoutes'));
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch(err => console.error('MongoDB connection error:', err));
