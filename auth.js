@@ -1,3 +1,5 @@
+const API_URL = 'http://localhost:5000'; // Update this to your backend URL
+
 // Mock Database (You can replace this with real backend integration later)
 const users = [];
 
@@ -17,7 +19,7 @@ async function handleSignUp(event) {
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/users/register', {
+        const response = await fetch(`${API_URL}/api/users/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,7 +47,6 @@ async function handleLogin(event) {
     event.preventDefault();
 
     const email = document.getElementById("loginUsername").value;
-    
     const password = document.getElementById("loginPassword").value;
 
     const loginData = {
@@ -54,7 +55,7 @@ async function handleLogin(event) {
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/users/login', {
+        const response = await fetch(`${API_URL}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +67,7 @@ async function handleLogin(event) {
 
         if (response.ok) {
             alert(result.message); // Show success message
-            window.location.href = "homepage.html"; // Redirect to homepage
+            window.location.href = "index.html"; // Redirect to homepage
         } else {
             alert(result.error); // Show error message
             console.error('Error during login:', result.error);

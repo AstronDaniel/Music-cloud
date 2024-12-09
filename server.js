@@ -24,9 +24,11 @@ mongoose.connect(uri, {
 
 // Import routes
 const songRoutes = require('./api/routes/songRoutes'); // Ensure the correct path
+const userRoutes = require('./api/routes/userRoutes'); // Ensure the correct path
 
 // Use routes
 app.use('/api/songs', songRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
