@@ -3,6 +3,7 @@ const Song = require('../../models/song');
 const { fetchLatestMusic, fetchTrendingMusic, getDownloadUrl, searchYouTube } = require('../../youtubeService');
 const ytdl = require('ytdl-core');
 const WebSocket = require('ws');
+const axios = require('axios');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
@@ -145,72 +146,19 @@ exports.createSong = async (req, res) => {
 // Add to exports in songController.js
 exports.downloadSong = async (req, res) => {
     try {
-        const { videoUrl, socketId } = req.query;
+        const { videoUrl } = req.query;
         if (!videoUrl) {
             return res.status(400).json({ error: 'Video URL is required' });
         }
 
-        // Send initial status
-        wss.clients.forEach(client => {
-            if (client.id === socketId) {
-                client.send(JSON.stringify({
-                    status: 'Initializing download...',
-                    progress: 0
-                }));
-            }
+        const response = await axios.get(`http://localhost:5001/download`, {
+            params: { videoUrl },
+            responseType: 'stream'
         });
 
-        // Get video info
-        const info = await ytdl.getInfo(videoUrl);
-        const title = info.videoDetails.title.replace(/[^\w\s]/gi, '');
-        const audioFormat = ytdl.chooseFormat(info.formats, { 
-            quality: 'highestaudio',
-            filter: 'audioonly' 
-        });
-
-        // Update format selection
-        wss.clients.forEach(client => {
-            if (client.id === socketId) {
-                client.send(JSON.stringify({
-                    status: 'Selected audio format...',
-                    progress: 20
-                }));
-            }
-        });
-
-        res.header('Content-Disposition', `attachment; filename="${title}.mp3"`);
-        res.header('Content-Type', 'audio/mpeg');
-        res.header('Transfer-Encoding', 'chunked');
-
-        const stream = ytdl(videoUrl, {
-            format: audioFormat,
-            highWaterMark: 1024 * 1024
-        });
-
-        stream.on('progress', (_, downloaded, total) => {
-            const progress = Math.floor((downloaded / total) * 100);
-            wss.clients.forEach(client => {
-                if (client.id === socketId) {
-                    client.send(JSON.stringify({
-                        status: `Downloading: ${progress}%`,
-                        progress: 20 + (progress * 0.8) // Scale from 20% to 100%
-                    }));
-                }
-            });
-        });
-
-        stream.pipe(res);
-
+        response.data.pipe(res);
     } catch (error) {
         console.error('Download error:', error);
-        wss.clients.forEach(client => {
-            if (client.id === socketId) {
-                client.send(JSON.stringify({
-                    status: 'Download failed',
-                    error: error.message
-                }));
-            }
-        });
         res.status(500).json({ error: 'Failed to download song' });
     }
 };

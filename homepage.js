@@ -38,7 +38,7 @@ function renderMusicSection(data, containerId) {
                         Play
                     </button>
                     <button class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded-full text-sm transition"
-                            onclick="musicDownloader.download('${utils.sanitizeHTML(track.url)}', '${utils.sanitizeHTML(track.title)}')">
+                            onclick="musicDownloader.download('${utils.sanitizeHTML(track.url)}', '${utils.sanitizeHTML(track.title)}', event)">
                         Download
                     </button>
                 </div>
@@ -112,50 +112,150 @@ const musicPlayer = {
     }
 };
 
+// homepage.js - Update API URLs
+const PC_IP = '192.168.43.57'; // Replace with your PC's IP address
+const API_URL = `http://${PC_IP}:5000`;
+const FLASK_URL = `http://${PC_IP}:5001`;
+
 // Music Downloader
 const musicDownloader = {
-    async download(videoUrl, title) {
-        try {
-            const sanitizedTitle = utils.sanitizeHTML(title);
-            
-            // Show progress indicator
-            const progressSwal = Swal.fire({
-                title: 'Downloading...',
-                html: 'Starting download...',
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
+    socket: null,
+    activeDownloads: new Map(),
+    
+    async ensureSocketConnection() {
+        if (this.socket?.connected) return true;
+        return this.initSocket();
+    },
+
+    initSocket() {
+        return new Promise((resolve) => {
+            this.socket = io('http://localhost:5001', {
+                transports: ['websocket', 'polling'], // Allow fallback to polling
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
+                path: '/socket.io',
+                cors: {
+                    origin: "http://localhost:5000",
+                    methods: ["GET", "POST"]
                 }
             });
 
-            const downloadUrl = `http://localhost:5000/api/songs/download?videoUrl=${encodeURIComponent(videoUrl)}`;
-            
-            // Use fetch with timeout
-            const response = await fetch(downloadUrl, {
-                timeout: 600000 // 10 minutes
+            this.socket.on('connect', () => {
+                console.log('Socket connected:', this.socket.id);
+                resolve(true);
             });
-            
-            if (!response.ok) throw new Error('Download failed');
-            
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${sanitizedTitle}.mp3`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
 
-            Swal.close();
+            this.socket.on('connect_error', (error) => {
+                console.error('Socket connection error:', error);
+            });
+
+            this.socket.on('download_progress', (data) => {
+                const toast = Swal.mixin({
+                    toast: true,
+                    position: 'bottom-end',
+                    showConfirmButton: false,
+                    timer: data.status === 'completed' ? 5000 : null,
+                    timerProgressBar: true
+                });
+
+                toast.fire({
+                    title: data.message,
+                    html: data.status === 'downloading' ? 
+                        `Progress: ${data.progress}<br>Speed: ${data.speed}<br>ETA: ${data.eta}` : 
+                        undefined,
+                    icon: data.status === 'error' ? 'error' : 'info'
+                });
+
+                // Log to console
+                console.log(`Download Status: ${data.status}`, data);
+            });
+        });
+    },
+
+    updateDownloadProgress(downloadId, data) {
+        const toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+
+        if (data.progress === '100%') {
+            toast.fire({
+                icon: 'success',
+                title: 'Download Complete!'
+            });
+            this.activeDownloads.delete(downloadId);
+        } else {
+            if (!this.activeDownloads.has(downloadId)) {
+                toast.fire({
+                    html: `
+                        <div class="download-progress">
+                            <div class="progress-bar" style="width: ${data.progress}"></div>
+                            <div class="text-sm">Downloading: ${data.progress}</div>
+                            <div class="text-xs text-gray-400">Speed: ${data.speed}</div>
+                        </div>
+                    `
+                });
+                this.activeDownloads.set(downloadId, true);
+            }
+        }
+    },
+
+    async download(videoUrl, title, event) {
+        if (event) event.preventDefault();
+
+        try {
+            await this.ensureSocketConnection();
+            const downloadId = `${this.socket.id}-${Date.now()}`;
+
+            const downloadUrl = `${API_URL}/api/songs/download?videoUrl=${encodeURIComponent(videoUrl)}&socketId=${this.socket.id}`;
             
+            // Start download in background
+            const downloadPromise = fetch(downloadUrl).then(async (response) => {
+                if (!response.ok) throw new Error('Download failed');
+                const blob = await response.blob();
+                return { blob, title };
+            });
+
+            // Show initial progress
+            Swal.fire({
+                title: 'Starting Download...',
+                html: '<div class="spinner"></div>',
+                showConfirmButton: false,
+                allowOutsideClick: true,
+                willClose: () => {
+                    // Continue download in background
+                    downloadPromise.then(({blob, title}) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.style.display = 'none';
+                        link.href = url;
+                        link.download = `${title}.mp3`;
+                        document.body.appendChild(link);
+                        link.click();
+                        setTimeout(() => {
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(url);
+                        }, 100);
+                    }).catch(error => {
+                        console.error('Download failed:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Download Failed',
+                            text: error.message
+                        });
+                    });
+                }
+            });
+
         } catch (error) {
             console.error('Download Error:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Download Failed',
-                text: 'Unable to download the track. Please try again.'
+                text: error.message || 'Unable to download track'
             });
         }
     }
@@ -298,6 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('playlistGrid').innerHTML = createPlaylistCard(playlistName) + document.getElementById('playlistGrid').innerHTML;
         document.getElementById('playlistInput').value = ''; // Clear input
     });
+
+    musicDownloader.initSocket().catch(console.error);
 });
 
 // homepage.js - Update search functionality
@@ -349,7 +451,7 @@ const searchHandler = {
                             Play
                         </button>
                         <button class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded-full text-sm transition"
-                                onclick="musicDownloader.download('${utils.sanitizeHTML(song.url)}', '${utils.sanitizeHTML(song.title)}')">
+                                onclick="musicDownloader.download('${utils.sanitizeHTML(song.url)}', '${utils.sanitizeHTML(song.title)}', event); return false;">
                             Download
                         </button>
                     </div>
@@ -358,4 +460,3 @@ const searchHandler = {
         `).join('');
     }
 };
-// console.log("almost")
