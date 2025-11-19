@@ -1,9 +1,10 @@
 // musicService.js
 const SpotifyWebApi = require('spotify-web-api-node');
+require('dotenv').config(); // Load environment variables
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: 'your_client_id',
-  clientSecret: 'your_client_secret'
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 });
 
 async function searchTracks(query) {

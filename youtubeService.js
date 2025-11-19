@@ -1,8 +1,9 @@
 // youtubeService.js
 const axios = require('axios');
 const ytdl = require('ytdl-core'); // Import ytdl-core
+require('dotenv').config(); // Load environment variables
 
-const YOUTUBE_API_KEY = 'AIzaSyAB3qqNg9azr9RX94_C65pefagZRPVO9mo';
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search';
 
 async function fetchLatestMusic() {
